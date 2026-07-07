@@ -1,0 +1,85 @@
+{
+  "image_id": "switch_01_frame_000150",
+  "image_path": "data/images/switch_01/frame_000150.jpg",
+  "timestamp": null,
+  "area_hint": "开关面板",
+  "scene_summary": "画面左侧为白色墙面，墙面上有三个并排的开关面板，上方贴有标签。右侧为开阔的室内空间，类似仓库或调试区，地面摆放着多个纸箱，天花板上有多个长条形照明灯，远处有窗户透入自然光。",
+  "area_type": "调试区",
+  "objects": [
+    {
+      "name": "墙面开关",
+      "category": "light_switch",
+      "location_description": "画面左侧墙面",
+      "state": "无法判断",
+      "attributes": [
+        "固定",
+        "可操作",
+        "关灯任务相关"
+      ],
+      "inspection_relevance": "关灯巡检任务相关",
+      "risk_level": "none",
+      "suggested_action": "靠近开关进一步确认或执行关灯",
+      "confidence": 0.85
+    },
+    {
+      "name": "天花板灯",
+      "category": "light_fixture",
+      "location_description": "画面右侧天花板",
+      "state": "开启",
+      "attributes": [
+        "发光",
+        "照明来源"
+      ],
+      "inspection_relevance": "判断是否需要关灯的依据",
+      "risk_level": "none",
+      "suggested_action": "无",
+      "confidence": 0.9
+    },
+    {
+      "name": "纸箱",
+      "category": "box",
+      "location_description": "画面右侧地面",
+      "state": "静止",
+      "attributes": [
+        "堆放"
+      ],
+      "inspection_relevance": "环境障碍物",
+      "risk_level": "low",
+      "suggested_action": "注意避让",
+      "confidence": 0.95
+    }
+  ],
+  "light_inspection": {
+    "room_lighting_state": "on",
+    "ambient_light_level": "bright",
+    "visible_light_sources": [
+      "天花板灯",
+      "窗外自然光"
+    ],
+    "switch_visibility": "visible",
+    "switches": [
+      {
+        "visible": true,
+        "location_description": "画面左侧墙面",
+        "state": "uncertain",
+        "evidence": "开关面板可见，但无法从图像判断具体拨动方向或状态",
+        "confidence": 0.6
+      }
+    ],
+    "need_turn_off": "yes",
+    "evidence": "天花板灯明显发光，房间明亮，虽然也有自然光，但人工照明处于开启状态，符合关灯巡检目标",
+    "suggested_action": "前往左侧墙面操作开关关灯",
+    "confidence": 0.8
+  },
+  "spatial_relations": [
+    "开关面板位于画面左侧墙面",
+    "纸箱位于开关面板右侧的地面上",
+    "天花板灯位于纸箱上方"
+  ],
+  "abnormalities": [],
+  "uncertainty": [
+    "无法确认开关的具体状态（开启或关闭）",
+    "无法完全排除自然光对整体亮度的贡献，但人工光源明显开启"
+  ],
+  "raw_model_response": null
+}

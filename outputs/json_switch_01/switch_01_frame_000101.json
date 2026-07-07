@@ -1,0 +1,95 @@
+{
+  "image_id": "switch_01_frame_000101",
+  "image_path": "data/images/switch_01/frame_000101.jpg",
+  "timestamp": null,
+  "area_hint": "开关面板",
+  "scene_summary": "画面左侧为白色墙面，墙上安装有三个并排的白色开关面板，上方贴有标签。右侧为开阔的室内空间，地面摆放有多个纸箱，天花板可见多排长条形照明灯具，远处有窗户透入自然光。",
+  "area_type": "工具区",
+  "objects": [
+    {
+      "name": "墙面开关",
+      "category": "light_switch",
+      "location_description": "画面左侧白色墙面",
+      "state": "无法判断",
+      "attributes": [
+        "固定",
+        "可操作",
+        "关灯任务相关"
+      ],
+      "inspection_relevance": "关灯巡检任务相关",
+      "risk_level": "none",
+      "suggested_action": "靠近开关进一步确认或执行关灯",
+      "confidence": 0.85
+    },
+    {
+      "name": "天花板灯",
+      "category": "light_fixture",
+      "location_description": "画面右侧天花板",
+      "state": "开启",
+      "attributes": [
+        "固定",
+        "发光"
+      ],
+      "inspection_relevance": "照明来源",
+      "risk_level": "none",
+      "suggested_action": "无",
+      "confidence": 0.9
+    },
+    {
+      "name": "纸箱",
+      "category": "box",
+      "location_description": "画面右侧地面",
+      "state": "静止",
+      "attributes": [
+        "堆放"
+      ],
+      "inspection_relevance": "环境物体",
+      "risk_level": "low",
+      "suggested_action": "注意避让",
+      "confidence": 0.95
+    }
+  ],
+  "light_inspection": {
+    "room_lighting_state": "on",
+    "ambient_light_level": "bright",
+    "visible_light_sources": [
+      "天花板灯",
+      "窗外自然光"
+    ],
+    "switch_visibility": "visible",
+    "switches": [
+      {
+        "visible": true,
+        "location_description": "画面左侧白色墙面",
+        "state": "uncertain",
+        "evidence": "开关面板可见，但无法从图像判断具体拨动方向",
+        "confidence": 0.6
+      }
+    ],
+    "need_turn_off": "yes",
+    "evidence": "天花板灯明显发光，室内明亮，需要执行关灯操作",
+    "suggested_action": "前往左侧墙面操作开关关灯",
+    "confidence": 0.8
+  },
+  "spatial_relations": [
+    "开关面板位于左侧墙面",
+    "纸箱位于右侧地面",
+    "天花板灯位于右侧天花板"
+  ],
+  "abnormalities": [
+    {
+      "type": "通行风险",
+      "description": "地面摆放有多个纸箱，可能影响机器人通行",
+      "related_objects": [
+        "纸箱"
+      ],
+      "risk_level": "medium",
+      "suggested_action": "机器人绕行或提醒人工整理"
+    }
+  ],
+  "uncertainty": [
+    "无法确认开关具体拨动方向",
+    "无法确认天花板灯是否全部开启"
+  ],
+  "raw_model_response": null
+}

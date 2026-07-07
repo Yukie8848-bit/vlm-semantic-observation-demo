@@ -1,0 +1,56 @@
+{
+  "image_id": "switch_01_frame_000115",
+  "image_path": "data/images/switch_01/frame_000115.jpg",
+  "timestamp": null,
+  "area_hint": "开关面板",
+  "scene_summary": "画面左侧为门框及门把手，中间为白色墙面，墙面上方有三个并排的开关面板，右侧为通向内部区域的开口，可见内部有照明灯和堆放的纸箱。",
+  "area_type": "走廊",
+  "objects": [
+    {
+      "name": "墙面开关",
+      "category": "light_switch",
+      "location_description": "画面中间偏右上方墙面",
+      "state": "无法判断",
+      "attributes": [
+        "固定",
+        "可操作",
+        "关灯任务相关"
+      ],
+      "inspection_relevance": "关灯巡检任务相关",
+      "risk_level": "none",
+      "suggested_action": "靠近开关进一步确认或执行关灯",
+      "confidence": 0.85
+    }
+  ],
+  "light_inspection": {
+    "room_lighting_state": "on",
+    "ambient_light_level": "bright",
+    "visible_light_sources": [
+      "内部区域天花板灯"
+    ],
+    "switch_visibility": "visible",
+    "switches": [
+      {
+        "visible": true,
+        "location_description": "画面中间偏右上方墙面",
+        "state": "uncertain",
+        "evidence": "开关面板可见，但无法从图像判断具体拨动方向",
+        "confidence": 0.6
+      }
+    ],
+    "need_turn_off": "uncertain",
+    "evidence": "右侧内部区域可见天花板灯发光，但无法确定这些灯是否由当前墙面的开关控制",
+    "suggested_action": "如果机器人可操作墙面开关，尝试操作并观察右侧区域灯光变化；否则提醒人工确认",
+    "confidence": 0.6
+  },
+  "spatial_relations": [
+    "开关面板位于门右侧的墙面上",
+    "右侧开口通向堆放纸箱的内部区域"
+  ],
+  "abnormalities": [],
+  "uncertainty": [
+    "无法确认开关拨动方向",
+    "无法确认当前墙面的开关是否控制右侧可见区域的灯光"
+  ],
+  "raw_model_response": null
+}

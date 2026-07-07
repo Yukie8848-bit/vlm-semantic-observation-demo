@@ -1,0 +1,84 @@
+{
+  "image_id": "switch_01_frame_000118",
+  "image_path": "data/images/switch_01/frame_000118.jpg",
+  "timestamp": null,
+  "area_hint": "开关面板",
+  "scene_summary": "画面左侧为白色墙面，墙上安装有三个并排的白色开关面板，上方贴有标签。画面右侧展示了一个宽敞的室内空间，疑似仓库或调试区，地面摆放着多个纸箱，天花板上有明显的条形照明灯正在发光。",
+  "area_type": "调试区",
+  "objects": [
+    {
+      "name": "墙面开关",
+      "category": "light_switch",
+      "location_description": "画面左侧墙面",
+      "state": "无法判断",
+      "attributes": [
+        "固定",
+        "可操作",
+        "关灯任务相关"
+      ],
+      "inspection_relevance": "关灯巡检任务相关",
+      "risk_level": "none",
+      "suggested_action": "靠近开关进一步确认或执行关灯",
+      "confidence": 0.85
+    },
+    {
+      "name": "天花板照明灯",
+      "category": "light_fixture",
+      "location_description": "画面右侧天花板",
+      "state": "开启",
+      "attributes": [
+        "发光",
+        "照明来源"
+      ],
+      "inspection_relevance": "判断房间灯光状态",
+      "risk_level": "none",
+      "suggested_action": "无",
+      "confidence": 0.95
+    },
+    {
+      "name": "纸箱",
+      "category": "box",
+      "location_description": "画面右侧地面",
+      "state": "静置",
+      "attributes": [
+        "堆放"
+      ],
+      "inspection_relevance": "环境障碍物",
+      "risk_level": "low",
+      "suggested_action": "机器人通行时注意避让",
+      "confidence": 0.9
+    }
+  ],
+  "light_inspection": {
+    "room_lighting_state": "on",
+    "ambient_light_level": "bright",
+    "visible_light_sources": [
+      "天花板灯"
+    ],
+    "switch_visibility": "visible",
+    "switches": [
+      {
+        "visible": true,
+        "location_description": "画面左侧墙面",
+        "state": "uncertain",
+        "evidence": "开关面板清晰可见，但无法从图像判断具体拨动方向或状态",
+        "confidence": 0.8
+      }
+    ],
+    "need_turn_off": "yes",
+    "evidence": "画面右侧天花板可见多盏条形灯明显发光，房间整体明亮，判断灯光处于开启状态，需要执行关灯动作",
+    "suggested_action": "操作左侧墙面的开关面板尝试关灯",
+    "confidence": 0.9
+  },
+  "spatial_relations": [
+    "开关面板位于左侧墙面",
+    "纸箱位于右侧地面区域",
+    "天花板灯位于右侧空间上方"
+  ],
+  "abnormalities": [],
+  "uncertainty": [
+    "无法确认左侧墙面的三个开关分别控制哪些灯具",
+    "无法从图像直接判断开关当前的物理拨动状态"
+  ],
+  "raw_model_response": null
+}

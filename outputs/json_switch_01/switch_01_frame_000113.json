@@ -1,0 +1,96 @@
+{
+  "image_id": "switch_01_frame_000113",
+  "image_path": "data/images/switch_01/frame_000113.jpg",
+  "timestamp": null,
+  "area_hint": "开关面板",
+  "scene_summary": "画面左侧为白色墙面，墙面上方安装有三个并排的白色开关面板，其中中间一个上方贴有黄色标签。画面右侧展示了一个宽敞的室内空间，疑似仓库或大型办公区，地面摆放着大量纸箱，天花板上有多个长条形照明灯正在发光，远处有窗户透入自然光。",
+  "area_type": "货架区",
+  "objects": [
+    {
+      "name": "墙面开关",
+      "category": "light_switch",
+      "location_description": "画面左侧墙面",
+      "state": "无法判断",
+      "attributes": [
+        "固定",
+        "可操作",
+        "关灯任务相关"
+      ],
+      "inspection_relevance": "关灯巡检任务相关",
+      "risk_level": "none",
+      "suggested_action": "靠近开关进一步确认或执行关灯",
+      "confidence": 0.85
+    },
+    {
+      "name": "天花板照明灯",
+      "category": "light_fixture",
+      "location_description": "画面右侧天花板",
+      "state": "开启",
+      "attributes": [
+        "发光",
+        "照明来源"
+      ],
+      "inspection_relevance": "判断房间灯光状态",
+      "risk_level": "none",
+      "suggested_action": "无",
+      "confidence": 0.95
+    },
+    {
+      "name": "纸箱",
+      "category": "box",
+      "location_description": "画面右侧地面",
+      "state": "堆放",
+      "attributes": [
+        "静止",
+        "障碍物"
+      ],
+      "inspection_relevance": "影响机器人通行",
+      "risk_level": "low",
+      "suggested_action": "规划路径时避开",
+      "confidence": 0.95
+    }
+  ],
+  "light_inspection": {
+    "room_lighting_state": "on",
+    "ambient_light_level": "bright",
+    "visible_light_sources": [
+      "天花板灯",
+      "窗外自然光"
+    ],
+    "switch_visibility": "visible",
+    "switches": [
+      {
+        "visible": true,
+        "location_description": "画面左侧墙面",
+        "state": "uncertain",
+        "evidence": "开关面板可见，但无法从图像判断具体拨动方向或状态",
+        "confidence": 0.8
+      }
+    ],
+    "need_turn_off": "yes",
+    "evidence": "天花板上的多个照明灯明显处于开启发光状态，且室内光线充足，需要执行关灯操作",
+    "suggested_action": "前往左侧墙面操作开关执行关灯",
+    "confidence": 0.9
+  },
+  "spatial_relations": [
+    "开关面板位于画面左侧墙面",
+    "纸箱散落在右侧区域地面",
+    "天花板灯位于纸箱上方"
+  ],
+  "abnormalities": [
+    {
+      "type": "通行风险",
+      "description": "地面摆放大量纸箱，占据部分通道，可能影响机器人通行路径",
+      "related_objects": [
+        "纸箱"
+      ],
+      "risk_level": "medium",
+      "suggested_action": "提醒人工整理或机器人绕行"
+    }
+  ],
+  "uncertainty": [
+    "无法确认左侧墙面开关的具体控制区域",
+    "无法确认开关当前的具体拨动状态"
+  ],
+  "raw_model_response": null
+}

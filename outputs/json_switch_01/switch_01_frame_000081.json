@@ -1,0 +1,65 @@
+{
+  "image_id": "switch_01_frame_000081",
+  "image_path": "data/images/switch_01/frame_000081.jpg",
+  "timestamp": null,
+  "area_hint": "开关面板",
+  "scene_summary": "画面左侧为白色墙面，上方有三个并排的墙面开关，中间开关上方有黄色标签。右侧为通向内部办公/仓储区域的通道，内部可见天花板上的日光灯管发光，地面摆放有多个纸箱。",
+  "area_type": "工具区",
+  "objects": [
+    {
+      "name": "墙面开关",
+      "category": "light_switch",
+      "location_description": "画面左侧墙面",
+      "state": "无法判断",
+      "attributes": [
+        "固定",
+        "可操作",
+        "关灯任务相关"
+      ],
+      "inspection_relevance": "关灯巡检任务相关",
+      "risk_level": "none",
+      "suggested_action": "靠近开关进一步确认或执行关灯",
+      "confidence": 0.85
+    }
+  ],
+  "light_inspection": {
+    "room_lighting_state": "on",
+    "ambient_light_level": "bright",
+    "visible_light_sources": [
+      "天花板灯"
+    ],
+    "switch_visibility": "visible",
+    "switches": [
+      {
+        "visible": true,
+        "location_description": "画面左侧墙面",
+        "state": "uncertain",
+        "evidence": "开关面板可见，但无法从图像判断具体拨动方向",
+        "confidence": 0.8
+      }
+    ],
+    "need_turn_off": "yes",
+    "evidence": "内部区域天花板上的日光灯管明显发光，且室内光线充足，判断为灯光开启状态",
+    "suggested_action": "操作左侧墙面的开关进行关灯",
+    "confidence": 0.85
+  },
+  "spatial_relations": [
+    "开关面板位于通往内部区域的通道左侧墙面",
+    "纸箱摆放在内部区域的地面上"
+  ],
+  "abnormalities": [
+    {
+      "type": "通行风险",
+      "description": "内部区域地面摆放有多个纸箱，可能影响机器人通行",
+      "related_objects": [
+        "纸箱"
+      ],
+      "risk_level": "medium",
+      "suggested_action": "机器人绕行或提醒人工整理"
+    }
+  ],
+  "uncertainty": [
+    "无法确认开关的具体拨动方向"
+  ],
+  "raw_model_response": null
+}

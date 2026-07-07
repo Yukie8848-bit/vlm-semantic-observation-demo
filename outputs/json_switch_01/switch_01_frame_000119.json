@@ -1,0 +1,85 @@
+{
+  "image_id": "switch_01_frame_000119",
+  "image_path": "data/images/switch_01/frame_000119.jpg",
+  "timestamp": null,
+  "area_hint": "开关面板",
+  "scene_summary": "画面左侧为白色墙面，墙上安装有三个并排的白色开关面板，上方有黄色标识牌。右侧为开阔的仓储或物流区域，地面摆放着大量纸箱，天花板上有多个长条形照明灯正在发光，整体环境明亮。",
+  "area_type": "货架区",
+  "objects": [
+    {
+      "name": "墙面开关",
+      "category": "light_switch",
+      "location_description": "左侧白色墙面",
+      "state": "无法判断",
+      "attributes": [
+        "固定",
+        "可操作",
+        "关灯任务相关"
+      ],
+      "inspection_relevance": "关灯巡检任务相关",
+      "risk_level": "none",
+      "suggested_action": "靠近开关进一步确认或执行关灯",
+      "confidence": 0.85
+    },
+    {
+      "name": "天花板照明灯",
+      "category": "light_fixture",
+      "location_description": "右侧区域天花板",
+      "state": "开启",
+      "attributes": [
+        "发光",
+        "照明来源"
+      ],
+      "inspection_relevance": "判断是否需要关灯的依据",
+      "risk_level": "none",
+      "suggested_action": "无",
+      "confidence": 0.95
+    },
+    {
+      "name": "纸箱",
+      "category": "box",
+      "location_description": "右侧区域地面",
+      "state": "堆放",
+      "attributes": [
+        "静止",
+        "障碍物"
+      ],
+      "inspection_relevance": "环境物体",
+      "risk_level": "low",
+      "suggested_action": "注意避让",
+      "confidence": 0.95
+    }
+  ],
+  "light_inspection": {
+    "room_lighting_state": "on",
+    "ambient_light_level": "bright",
+    "visible_light_sources": [
+      "天花板灯"
+    ],
+    "switch_visibility": "visible",
+    "switches": [
+      {
+        "visible": true,
+        "location_description": "左侧白色墙面",
+        "state": "uncertain",
+        "evidence": "开关面板清晰可见，但无法从图像判断具体拨动方向或状态",
+        "confidence": 0.8
+      }
+    ],
+    "need_turn_off": "yes",
+    "evidence": "画面右侧区域天花板灯明显发光，环境明亮，判断灯光处于开启状态，需要执行关灯动作",
+    "suggested_action": "前往左侧墙面操作开关执行关灯",
+    "confidence": 0.9
+  },
+  "spatial_relations": [
+    "开关面板位于左侧墙面",
+    "纸箱位于右侧区域地面",
+    "天花板灯位于右侧区域上方"
+  ],
+  "abnormalities": [],
+  "uncertainty": [
+    "无法确认开关当前具体状态（开启或关闭）",
+    "无法确认左侧开关是否控制右侧区域的灯光"
+  ],
+  "raw_model_response": null
+}

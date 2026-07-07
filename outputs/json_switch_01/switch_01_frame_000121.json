@@ -1,0 +1,83 @@
+{
+  "image_id": "switch_01_frame_000121",
+  "image_path": "data/images/switch_01/frame_000121.jpg",
+  "timestamp": null,
+  "area_hint": "开关面板",
+  "scene_summary": "画面左侧为白色墙面，墙上安装有三个并排的白色开关面板及一个黄色标识牌。右侧背景为一个开阔的仓储或物流区域，可见天花板上的多排日光灯正在发光，地面堆放着多个纸箱。",
+  "area_type": "货架区",
+  "objects": [
+    {
+      "name": "墙面开关",
+      "category": "light_switch",
+      "location_description": "画面左侧白色墙面",
+      "state": "无法判断",
+      "attributes": [
+        "固定",
+        "可操作",
+        "关灯任务相关"
+      ],
+      "inspection_relevance": "关灯巡检任务相关",
+      "risk_level": "none",
+      "suggested_action": "靠近开关进一步确认或执行关灯",
+      "confidence": 0.85
+    },
+    {
+      "name": "天花板灯",
+      "category": "light_source",
+      "location_description": "背景区域天花板",
+      "state": "开启",
+      "attributes": [
+        "发光",
+        "照明来源"
+      ],
+      "inspection_relevance": "判断房间灯光状态",
+      "risk_level": "none",
+      "suggested_action": "无",
+      "confidence": 0.95
+    },
+    {
+      "name": "纸箱",
+      "category": "box",
+      "location_description": "背景区域地面",
+      "state": "堆放",
+      "attributes": [
+        "静止"
+      ],
+      "inspection_relevance": "环境障碍物",
+      "risk_level": "low",
+      "suggested_action": "注意避让",
+      "confidence": 0.9
+    }
+  ],
+  "light_inspection": {
+    "room_lighting_state": "on",
+    "ambient_light_level": "bright",
+    "visible_light_sources": [
+      "天花板灯"
+    ],
+    "switch_visibility": "visible",
+    "switches": [
+      {
+        "visible": true,
+        "location_description": "画面左侧白色墙面",
+        "state": "uncertain",
+        "evidence": "开关面板清晰可见，但无法从图像判断其具体的开启或关闭状态",
+        "confidence": 0.8
+      }
+    ],
+    "need_turn_off": "yes",
+    "evidence": "背景区域天花板灯明显发光，处于开启状态，需要执行关灯操作",
+    "suggested_action": "操作墙面上的开关面板进行关灯",
+    "confidence": 0.85
+  },
+  "spatial_relations": [
+    "开关面板位于白色墙面上",
+    "纸箱位于背景区域地面上",
+    "天花板灯位于背景区域上方"
+  ],
+  "abnormalities": [],
+  "uncertainty": [
+    "无法确认墙面开关的具体拨动状态"
+  ],
+  "raw_model_response": null
+}
