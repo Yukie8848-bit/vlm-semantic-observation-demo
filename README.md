@@ -238,6 +238,20 @@ python3 scripts/search_demo.py --task light_off
 }
 ```
 
+如果只需要让机器人泛化描述“当前看见了什么”，可以参考 `src/scene_description_prompt.py`。它输出更通用的机器人视角场景 JSON，包括 `robot_view_summary`、`scene_type`、`main_objects`、`spatial_layout`、`navigability` 和 `task_relevant_observations`，适合后续扩展到非关灯任务。
+
+也可以通过同一个批处理脚本选择 prompt 模式：
+
+```bash
+# 关灯巡检，默认模式
+python3 scripts/run_vlm_api.py --prompt-mode light_off --image-dir data/images/switch_01 --output-dir outputs/json_switch_01 --area-hint 开关面板
+
+# 通用机器人视角场景描述
+python3 scripts/run_vlm_api.py --prompt-mode scene_description --image-dir data/images/switch_01 --output-dir outputs/json_scene_description --area-hint 开关面板
+```
+
+当前 `scripts/build_sqlite.py` 主要面向关灯巡检 schema。如果使用 `--prompt-mode scene_description`，建议先只查看生成的 JSON；后续可以再单独增加通用场景描述的 SQLite 表。
+
 ## 当前限制
 
 - 不是实时系统；

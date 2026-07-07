@@ -22,6 +22,10 @@ image_id: {image_id}
 image_path: {image_path}{hint}
 
 JSON schema:
+枚举字段只能从给定值中选择一个，不要输出带斜杠的组合字符串：
+- lighting.condition: "bright", "dim", "dark", "uncertain"
+- navigability.passage_risk: "none", "low", "medium", "high", "uncertain"
+
 {{
   "image_id": "{image_id}",
   "image_path": "{image_path}",
@@ -31,7 +35,7 @@ JSON schema:
   "scene_type": "会议室/办公室/调试区/工具区/货架区/走廊/门口/未知",
   "visible_area": "机器人视角覆盖的区域，例如门口附近、房间左侧、工作台前方",
   "lighting": {{
-    "condition": "bright/dim/dark/uncertain",
+    "condition": "bright",
     "visible_light_sources": ["天花板灯", "窗外自然光"],
     "description": "画面整体光照情况及可见光源说明"
   }},
@@ -54,7 +58,7 @@ JSON schema:
   "navigability": {{
     "free_space_description": "机器人前方可通行区域的大致情况",
     "obstacles": ["纸箱", "门框"],
-    "passage_risk": "none/low/medium/high/uncertain"
+    "passage_risk": "low"
   }},
   "task_relevant_observations": [
     {{

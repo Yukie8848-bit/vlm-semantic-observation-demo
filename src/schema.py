@@ -80,3 +80,62 @@ class SemanticObservation(BaseModel):
     @classmethod
     def empty_list_when_missing(cls, value):
         return [] if value is None else value
+
+
+class SceneLighting(BaseModel):
+    condition: Literal["bright", "dim", "dark", "uncertain"] = "uncertain"
+    visible_light_sources: list[str] = Field(default_factory=list)
+    description: str = ""
+
+
+class SceneObject(BaseModel):
+    name: str = ""
+    category: str = ""
+    location_description: str = ""
+    state: str = ""
+    attributes: list[str] = Field(default_factory=list)
+    task_relevance: str = ""
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+
+
+class SceneNavigability(BaseModel):
+    free_space_description: str = ""
+    obstacles: list[str] = Field(default_factory=list)
+    passage_risk: Literal["none", "low", "medium", "high", "uncertain"] = "uncertain"
+
+
+class TaskRelevantObservation(BaseModel):
+    type: str = "未知"
+    description: str = ""
+    suggested_follow_up: str = ""
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+
+
+class SceneDescriptionObservation(BaseModel):
+    image_id: str
+    image_path: str
+    timestamp: str | None = None
+    area_hint: str | None = None
+    robot_view_summary: str = ""
+    scene_type: str = "未知"
+    visible_area: str = ""
+    lighting: SceneLighting = Field(default_factory=SceneLighting)
+    main_objects: list[SceneObject] = Field(default_factory=list)
+    spatial_layout: list[str] = Field(default_factory=list)
+    navigability: SceneNavigability = Field(default_factory=SceneNavigability)
+    task_relevant_observations: list[TaskRelevantObservation] = Field(default_factory=list)
+    occlusions_or_blind_spots: list[str] = Field(default_factory=list)
+    uncertainty: list[str] = Field(default_factory=list)
+    raw_model_response: str | None = None
+
+    @field_validator(
+        "main_objects",
+        "spatial_layout",
+        "task_relevant_observations",
+        "occlusions_or_blind_spots",
+        "uncertainty",
+        mode="before",
+    )
+    @classmethod
+    def empty_list_when_missing(cls, value):
+        return [] if value is None else value

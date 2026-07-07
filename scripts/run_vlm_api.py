@@ -13,11 +13,19 @@ sys.path.insert(0, str(ROOT))
 
 from src.json_utils import extract_json_object, write_json
 from src.prompt import SYSTEM_PROMPT, build_user_prompt
-from src.schema import SemanticObservation
+from src.scene_description_prompt import SCENE_DESCRIPTION_SYSTEM_PROMPT, build_scene_description_prompt
+from src.schema import SceneDescriptionObservation, SemanticObservation
 from src.vlm_client import VLMClient
 
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
+PROMPT_MODES = {"light_off", "scene_description"}
+
+
+def get_prompt_config(prompt_mode: str):
+    if prompt_mode == "scene_description":
+        return SCENE_DESCRIPTION_SYSTEM_PROMPT, build_scene_description_prompt, SceneDescriptionObservation
+    return SYSTEM_PROMPT, build_user_prompt, SemanticObservation
 
 
 def resolve_path(path_text: str) -> Path:
@@ -62,6 +70,12 @@ def main() -> None:
     parser.add_argument("--overwrite", action="store_true", help="Reprocess images with existing JSON outputs.")
     parser.add_argument("--limit", type=int, default=None, help="Only process the first N images for quick tests.")
     parser.add_argument("--debug", action="store_true", help="Print per-image progress and errors.")
+    parser.add_argument(
+        "--prompt-mode",
+        choices=sorted(PROMPT_MODES),
+        default="light_off",
+        help="Prompt/schema mode: light_off for turn-off inspection, scene_description for generic robot view.",
+    )
     args = parser.parse_args()
 
     image_dir = resolve_path(args.image_dir)
@@ -76,10 +90,11 @@ def main() -> None:
         return
 
     client = VLMClient()
+    system_prompt, build_prompt, observation_schema = get_prompt_config(args.prompt_mode)
     ok_count = 0
     fail_count = 0
 
-    for image_path in tqdm(images, desc="VLM semantic observation"):
+    for image_path in tqdm(images, desc=f"VLM {args.prompt_mode}"):
         image_id = stable_image_id(image_path, image_dir)
         output_path = output_dir / f"{image_id}.json"
         if output_path.exists() and not args.overwrite:
@@ -97,8 +112,8 @@ def main() -> None:
                 print(f"[{image_id}] calling VLM API...", flush=True)
             raw_response = client.analyze_image(
                 image_path=image_path,
-                system_prompt=SYSTEM_PROMPT,
-                user_prompt=build_user_prompt(image_id, prompt_image_path, args.area_hint),
+                system_prompt=system_prompt,
+                user_prompt=build_prompt(image_id, prompt_image_path, args.area_hint),
             )
             if args.debug:
                 print(f"[{image_id}] parsing response...", flush=True)
@@ -107,7 +122,7 @@ def main() -> None:
             data.setdefault("image_path", prompt_image_path)
             data.setdefault("area_hint", args.area_hint)
             data["raw_model_response"] = raw_response
-            observation = SemanticObservation.model_validate(data)
+            observation = observation_schema.model_validate(data)
             write_json(output_path, observation.model_dump())
             if args.debug:
                 print(f"[{image_id}] saved: {output_path}", flush=True)
