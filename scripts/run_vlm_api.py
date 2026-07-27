@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -70,6 +71,7 @@ def main() -> None:
     parser.add_argument("--overwrite", action="store_true", help="Reprocess images with existing JSON outputs.")
     parser.add_argument("--limit", type=int, default=None, help="Only process the first N images for quick tests.")
     parser.add_argument("--debug", action="store_true", help="Print per-image progress and errors.")
+    parser.add_argument("--model", default=None, help="Temporarily override MODEL_NAME from .env.")
     parser.add_argument(
         "--prompt-mode",
         choices=sorted(PROMPT_MODES),
@@ -89,7 +91,7 @@ def main() -> None:
         print(f"No images found in {image_dir}")
         return
 
-    client = VLMClient()
+    client = VLMClient(model=args.model)
     system_prompt, build_prompt, observation_schema = get_prompt_config(args.prompt_mode)
     ok_count = 0
     fail_count = 0
@@ -116,6 +118,11 @@ def main() -> None:
                 user_prompt=build_prompt(image_id, prompt_image_path, args.area_hint),
             )
             if args.debug:
+                print(
+                    f"[{image_id}] API metrics: "
+                    f"{json.dumps(client.last_call_metrics, ensure_ascii=False)}",
+                    flush=True,
+                )
                 print(f"[{image_id}] parsing response...", flush=True)
             data = extract_json_object(raw_response)
             data.setdefault("image_id", image_id)
@@ -129,6 +136,12 @@ def main() -> None:
             ok_count += 1
         except (ValidationError, Exception) as exc:
             fail_count += 1
+            if args.debug and client.last_call_metrics:
+                print(
+                    f"[{image_id}] API metrics: "
+                    f"{json.dumps(client.last_call_metrics, ensure_ascii=False)}",
+                    flush=True,
+                )
             write_json(
                 output_path.with_suffix(".failed.json"),
                 {

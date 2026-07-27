@@ -59,7 +59,9 @@ cp .env.example .env
 - `API_KEY`：公司 API key。
 - `BASE_URL`：OpenAI-compatible base URL，例如 `https://api.example.com/v1`。
 - `MODEL_NAME`：公司提供的 VLM 模型名。
+- `FORCE_IPV4=true`：强制 OpenAI-compatible 请求使用 IPv4，避免不可达 IPv6 地址导致长时间连接超时。
 - `VLM_API_STYLE=requests`：用于普通 HTTP POST 接口，并配置 `VLM_ENDPOINT`。
+- `MAX_OUTPUT_TOKENS`：单次模型调用的最大输出 token 数，默认 `500`。
 
 `requests` 模式默认发送：
 
@@ -68,11 +70,44 @@ cp .env.example .env
   "model": "MODEL_NAME",
   "prompt": "系统提示词 + 用户提示词",
   "image": "data:image/jpeg;base64,...",
-  "temperature": 0
+  "temperature": 0,
+  "max_tokens": 500
 }
 ```
 
 如果公司接口字段不同，只需要改 `src/vlm_client.py` 里的 `_call_requests_api`。
+
+### OpenAI 兼容纯文本测速
+
+在排查图片理解速度前，可以先用同一个 API key、Base URL 和模型发送一次最短纯文本请求：
+
+```bash
+python scripts/benchmark_text_api.py
+```
+
+脚本默认关闭思考模式和 SDK 内部重试，仅要求模型返回 `OK`，并输出请求耗时、token usage 和 reasoning 状态。连续测试三次可使用：
+
+```bash
+python scripts/benchmark_text_api.py --repeat 3
+```
+
+临时测试另一个模型而不修改 `.env`：
+
+```bash
+python scripts/benchmark_text_api.py --model qwen3.6-flash
+```
+
+测量流式请求的首 Token 时间：
+
+```bash
+python scripts/benchmark_text_api.py --stream
+```
+
+使用同一个 key 测试 Anthropic 兼容端点：
+
+```bash
+python scripts/benchmark_anthropic_text_api.py
+```
 
 ## 放入图片
 
@@ -95,6 +130,7 @@ python3 scripts/run_vlm_api.py
 ```bash
 python3 scripts/run_vlm_api.py --area-hint 会议室
 python3 scripts/run_vlm_api.py --overwrite
+python3 scripts/run_vlm_api.py --model qwen3.6-flash
 ```
 
 如果使用仓库内公开示例数据 `data/images/switch_01/`，可以这样跑：
@@ -238,7 +274,7 @@ python3 scripts/search_demo.py --task light_off
 }
 ```
 
-如果只需要让机器人泛化描述“当前看见了什么”，可以参考 `src/scene_description_prompt.py`。它输出更通用的机器人视角场景 JSON，包括 `robot_view_summary`、`scene_type`、`main_objects`、`spatial_layout`、`navigability` 和 `task_relevant_observations`，适合后续扩展到非关灯任务。
+如果只需要让机器人泛化描述“当前看见了什么”，可以参考 `src/scene_description_prompt.py`。它输出紧凑的英文机器人视角场景 JSON，包括 `scene_brief`、`overall_lighting`、`items` 和 `uncertainty`。其中 `items` 最多记录 6 个主要物品，并按 `item1`、`item2` 记录物品可能是什么、形状、图中位置、当前视角下是否可操作和置信度。`operable` 只表示图像中交互部位清晰可见且未被明显阻挡，不代表导航、机械臂可达性或实际操作一定成功。
 
 也可以通过同一个批处理脚本选择 prompt 模式：
 
@@ -250,7 +286,38 @@ python3 scripts/run_vlm_api.py --prompt-mode light_off --image-dir data/images/s
 python3 scripts/run_vlm_api.py --prompt-mode scene_description --image-dir data/images/switch_01 --output-dir outputs/json_scene_description --area-hint 开关面板
 ```
 
-当前 `scripts/build_sqlite.py` 主要面向关灯巡检 schema。如果使用 `--prompt-mode scene_description`，建议先只查看生成的 JSON；后续可以再单独增加通用场景描述的 SQLite 表。
+通用场景 JSON 使用独立脚本写入 SQLite，避免和关灯巡检 schema 混用：
+
+```bash
+python3 scripts/build_scene_sqlite.py \
+  --json-dir outputs/json_scene_description \
+  --db-path outputs/scene_observations.sqlite
+```
+
+也可以一次导入多批结果。若不同目录中存在相同的 `image_id`，后导入的记录会覆盖先导入的记录：
+
+```bash
+python3 scripts/build_scene_sqlite.py \
+  --json-dir outputs/json_distance_test_01 \
+  --json-dir outputs/json_refrigerator_01_en \
+  --db-path outputs/all_scenes.sqlite
+```
+
+通用场景数据库包含：
+
+- `scene_images`：图片路径、场景摘要和整体灯光；
+- `scene_items`：物品名称、形状、图中位置和置信度；
+- `scene_uncertainty`：无法可靠确认的信息。
+
+按物品名称查询：
+
+```bash
+python3 scripts/search_scene.py --db-path outputs/all_scenes.sqlite --item refrigerator
+python3 scripts/search_scene.py --db-path outputs/all_scenes.sqlite --item 冰箱
+python3 scripts/search_scene.py --db-path outputs/all_scenes.sqlite --item switch --min-confidence 0.8
+```
+
+`--item` 使用名称子串匹配；英文匹配不区分大小写。查询结果返回原图路径、场景摘要、灯光情况、主要物品和不确定性。省略 `--item` 时会列出数据库中的场景记录。
 
 ## 当前限制
 
@@ -260,7 +327,7 @@ python3 scripts/run_vlm_api.py --prompt-mode scene_description --image-dir data/
 - 不做大型向量数据库；
 - 不做 grounding 模型评测；
 - 不保证单张图片一定能可靠判断物理开关状态，必须把看不清的开关、自然光干扰、曝光问题写入 `uncertainty`；
-- 只验证关灯巡检 VLM 语义观测、结构化存储和简单检索的小闭环。
+- 只验证关灯巡检与通用场景描述的 VLM 语义观测、结构化存储和简单检索小闭环。
 
 ## 验收标准
 

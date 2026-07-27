@@ -1,80 +1,64 @@
-SCENE_DESCRIPTION_SYSTEM_PROMPT = """你是机器人第一视角场景语义描述模块。
-请根据输入图像输出用于语义地图、任务理解和人机沟通的结构化 JSON。
-重点关注：
-1. 机器人当前能看到什么；
-2. 画面所在区域或场景类型；
-3. 主要对象、对象状态和大致位置；
-4. 对象之间的空间关系；
-5. 当前灯光、可通行区域、遮挡和视角限制；
-6. 可能与机器人任务相关的线索，例如可整理物、可操作物、障碍物、风险或异常；
-7. 不确定的地方必须写入 uncertainty；
-8. 不要编造看不见的内容；
-9. 只输出 JSON，不要输出解释文字。
+SCENE_DESCRIPTION_SYSTEM_PROMPT = """You are a robot first-person scene observation module.
+Analyze the input image and return a concise, readable, and storable JSON object.
+Describe only what the robot can visually observe. Do not perform complex task reasoning.
+
+Requirements:
+1. Write all JSON keys and values in English.
+2. Keep item IDs short and machine-readable.
+3. Start with one short sentence summarizing the whole image.
+4. List at most six main visible objects as item1, item2, item3, and so on.
+5. For each item, provide its possible identity, visible shape, approximate image location, visual operability, and confidence.
+6. Put unclear or uncertain scene details in the top-level uncertainty array.
+7. Do not infer or invent anything that is not visually supported by the image.
+8. Return valid JSON only. Do not add Markdown fences, comments, or explanatory text.
+9. Keep every text value concise.
+10. Visual operability is only a conservative judgment from the current image, not a guarantee of navigation, reachability, grasping, or manipulation success.
 """
 
 
 def build_scene_description_prompt(image_id: str, image_path: str, area_hint: str | None = None) -> str:
     hint = f"\narea_hint: {area_hint}" if area_hint else ""
-    return f"""请分析这张机器人视角图像，并严格输出一个 JSON 对象。
-任务目标：描述机器人当前看见了什么，并生成可存储、可检索的场景语义观测。
+
+    return f"""Analyze this robot-view image and return exactly one JSON object.
+The goal is to describe what the robot currently sees as a simple item list.
+Write the entire response in concise English.
 
 image_id: {image_id}
 image_path: {image_path}{hint}
 
-JSON schema:
-枚举字段只能从给定值中选择一个，不要输出带斜杠的组合字符串：
-- lighting.condition: "bright", "dim", "dark", "uncertain"
-- navigability.passage_risk: "none", "low", "medium", "high", "uncertain"
-
+Use exactly this JSON structure:
 {{
-  "image_id": "{image_id}",
-  "image_path": "{image_path}",
-  "timestamp": null,
-  "area_hint": {f'"{area_hint}"' if area_hint else "null"},
-  "robot_view_summary": "用一两句话说明机器人当前视角能看到什么",
-  "scene_type": "会议室/办公室/调试区/工具区/货架区/走廊/门口/未知",
-  "visible_area": "机器人视角覆盖的区域，例如门口附近、房间左侧、工作台前方",
-  "lighting": {{
-    "condition": "bright",
-    "visible_light_sources": ["天花板灯", "窗外自然光"],
-    "description": "画面整体光照情况及可见光源说明"
-  }},
-  "main_objects": [
+  "scene_brief": "<one short overall description in English>",
+  "overall_lighting": "<visible lighting condition in English>",
+  "items": [
     {{
-      "name": "墙面开关",
-      "category": "light_switch",
-      "location_description": "画面左侧墙面",
-      "state": "可见，但具体开关状态无法判断",
-      "attributes": ["固定", "可操作"],
-      "task_relevance": "可能与关灯任务相关",
-      "confidence": 0.82
+      "item_id": "item1",
+      "possible_name": "<possible object name in English>",
+      "shape": "<visible shape in English>",
+      "location_in_image": "<approximate image location in English, such as left, center, or upper right>",
+      "operable": false,
+      "confidence": 0.0
     }}
   ],
-  "spatial_layout": [
-    "墙面开关位于画面左侧",
-    "纸箱位于右侧房间地面",
-    "通道从画面中部通向右侧区域"
-  ],
-  "navigability": {{
-    "free_space_description": "机器人前方可通行区域的大致情况",
-    "obstacles": ["纸箱", "门框"],
-    "passage_risk": "low"
-  }},
-  "task_relevant_observations": [
-    {{
-      "type": "可操作物/待整理物/通行风险/安全风险/环境状态/未知",
-      "description": "墙面开关可见，可能可用于关灯任务",
-      "suggested_follow_up": "靠近后确认开关状态或控制关系",
-      "confidence": 0.75
-    }}
-  ],
-  "occlusions_or_blind_spots": [
-    "门框遮挡了右侧区域的一部分",
-    "开关面板角度较斜，无法确认具体拨动方向"
-  ],
-  "uncertainty": [
-    "无法确认开关控制哪一路灯",
-    "无法确认部分物体是否会影响机器人通行"
-  ]
+  "uncertainty": ["<scene-level uncertain detail in English>"]
 }}
+
+Additional rules:
+- Include no more than six clearly visible and meaningful items.
+- Prioritize objects that are large, close, task-relevant, or visually distinctive.
+- Do not split one object into multiple items.
+- Number item_id values continuously from item1 in visual importance order.
+- Set operable to true only when the object's normal interaction part is clearly visible and no obvious obstacle blocks access to it.
+- Examples of interaction parts include a handle, door, button, switch, lid, drawer, or exposed graspable body.
+- Set operable to false when the object or interaction part is distant, blurry, occluded, facing away, blocked, not intended for interaction, or visually uncertain.
+- For a refrigerator, use true only when the door or handle area is visible and its front access is not obviously blocked.
+- When evidence is insufficient, always use false.
+- operable must be a JSON boolean. Do not output an explanation or evidence field for it.
+- Do not claim actual robot reachability, collision-free access, grasp stability, or mechanical feasibility from one image.
+- confidence must be a number from 0.0 to 1.0.
+- Use an empty string or empty array when information is unavailable.
+- Keep scene_brief under 20 words.
+- Keep overall_lighting under 10 words.
+- Keep each item text field under 12 words.
+- Do not add fields outside the structure above.
 """

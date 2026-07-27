@@ -2,5 +2,7 @@
 .venv/
 __pycache__/
 *.py[cod]
-outputs/json/*.failed.json
-outputs/*.sqlite
+outputs/*
+!outputs/json/
+outputs/json/*
+!outputs/json/.gitkeep
