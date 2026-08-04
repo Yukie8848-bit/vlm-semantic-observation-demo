@@ -1,5 +1,7 @@
 # VLM Semantic Observation Demo
 
+SAM2 实例分割描述系统的一键运行与交接说明见 [SAM2_HANDOFF.md](SAM2_HANDOFF.md)。
+
 这个 demo 用于验证机器人关灯巡检/公司场景服务机器人的第一阶段最小闭环：
 
 本地图像输入 -> 调用公司 VLM API -> 输出结构化 JSON -> 保存本地 JSON/SQLite -> 支持简单语义查询 -> 返回原图路径和语义观测结果。
