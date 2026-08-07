@@ -166,6 +166,7 @@ def parse_frame_observation(
         if not label:
             raise ValueError(f"visible SAM2 instance {instance_id} has no label in {metadata_path}")
         if label in ignored_labels:
+            visible_metadata_ids.add(instance_id)
             background_filtered_records += 1
             continue
 

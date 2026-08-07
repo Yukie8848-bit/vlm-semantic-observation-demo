@@ -1,5 +1,7 @@
 # VLM Semantic Observation Demo
 
+新增的真实 VLM 实例描述入口见 [SAM2_VLM_TASK.md](SAM2_VLM_TASK.md)。它按稳定 SAM2 track 选择代表帧，生成掩码级视觉证据并调用现有 `VLMClient`，输出逐物品结构化 JSON。原 `run_sam2_pipeline.py` 仍是无网络、无 API 费用的确定性离线基线。
+
 本仓库包含两条相互独立的离线流程：
 
 1. **SAM2 实例结果转语义描述**：读取已有 RGB、SAM2 元数据和标签图，输出物品清单、图像二维位置、标注图和中文播报文本。这是当前交付的主要入口。
