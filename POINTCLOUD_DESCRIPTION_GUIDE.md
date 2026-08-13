@@ -180,3 +180,47 @@ $OUT_DIR/failures/<label>_track_<id>.json
 - 基于三维信息判断机械臂是否可达。
 
 因此交付时应称为“SAM2 分割物体的 VLM 描述，并可关联对应点云文件”，不要称为“VLM 已直接理解点云”。
+
+## 7. 和原来的整图 VLM 描述合并
+
+两套描述负责不同层次：
+
+- 原 VLM 描述整张图：场景概述、光照和主要物品。
+- SAM2 + VLM 描述单个 track：物体细节、证据图和可选 PCD 路径。
+
+先对任务 RGB 运行原来的整图描述：
+
+```bash
+SCENE_DIR="$TASK_DIR/scene_descriptions"
+
+python3 scripts/run_vlm_api.py \
+  --prompt-mode scene_description \
+  --image-dir "$RGB_DIR" \
+  --output-dir "$SCENE_DIR"
+```
+
+再按前面的步骤生成 `$OUT_DIR` 中的 SAM2 逐物体描述，最后合成一个统一文件：
+
+```bash
+python3 scripts/merge_scene_and_sam2_vlm.py \
+  --task-id Switch001 \
+  --scene-json-dir "$SCENE_DIR" \
+  --sam2-vlm-dir "$OUT_DIR" \
+  --output "$TASK_DIR/semantic_observation_bundle.json"
+```
+
+查看统一结果：
+
+```bash
+python3 -m json.tool "$TASK_DIR/semantic_observation_bundle.json"
+```
+
+统一文件中：
+
+- `scene_observations` 是原 VLM 的整图描述；
+- `sam2_object_observations` 是 SAM2 track 的逐物体描述；
+- `pointcloud_path` 保留在对应的 SAM2 物体结果中。
+
+合并脚本不会仅凭名称判断原 VLM 的 `item1` 和 SAM2 的 `track_7` 是同一个
+物体，也不会覆盖两边原始结果。这能避免错误匹配，同时让义博的上层 Agent
+只读取一个文件。

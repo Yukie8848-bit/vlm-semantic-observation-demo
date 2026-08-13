@@ -2,6 +2,7 @@
 
 要把 SAM2 分割物体生成 VLM 描述并关联 PCD 点云，请直接看
 [SAM2 物体描述与点云关联教程](POINTCLOUD_DESCRIPTION_GUIDE.md)。
+该教程也包含与原整图 VLM 描述合成统一 JSON 的命令。
 
 接口字段和实现边界见 [SAM2_VLM_TASK.md](SAM2_VLM_TASK.md)。原
 `run_sam2_pipeline.py` 仍是无网络、无 API 费用的确定性离线基线。
