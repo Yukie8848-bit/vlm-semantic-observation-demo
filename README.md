@@ -1,6 +1,10 @@
 # VLM Semantic Observation Demo
 
-新增的真实 VLM 实例描述入口见 [SAM2_VLM_TASK.md](SAM2_VLM_TASK.md)。它按稳定 SAM2 track 选择代表帧，生成掩码级视觉证据并调用现有 `VLMClient`，输出逐物品结构化 JSON。原 `run_sam2_pipeline.py` 仍是无网络、无 API 费用的确定性离线基线。
+要把 SAM2 分割物体生成 VLM 描述并关联 PCD 点云，请直接看
+[SAM2 物体描述与点云关联教程](POINTCLOUD_DESCRIPTION_GUIDE.md)。
+
+接口字段和实现边界见 [SAM2_VLM_TASK.md](SAM2_VLM_TASK.md)。原
+`run_sam2_pipeline.py` 仍是无网络、无 API 费用的确定性离线基线。
 
 水杯、MCP、义博 `robot_edge`、翊宸采集服务和本仓库之间的当前连接边界、部署位置及启动方式见 [INTEGRATION_HANDOFF.md](INTEGRATION_HANDOFF.md)。
 
